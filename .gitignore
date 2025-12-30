@@ -163,7 +163,3 @@ cython_debug/
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Project specific
-/database.db
-/orders.db
