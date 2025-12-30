@@ -1,0 +1,1592 @@
+[
+  {
+    "test_name": "POS01 Get Inventory",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/inventory",
+    "request_body": null,
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.019973",
+    "actual_status": 200,
+    "response_text": "[{\"sku\":\"FUR001\",\"name\":\"Wooden Chair\",\"stock\":18},{\"sku\":\"FUR002\",\"name\":\"Office Chair\",\"stock\":58},{\"sku\":\"FUR003\",\"name\":\"Recliner Chair\",\"stock\":0},{\"sku\":\"FUR004\",\"name\":\"Dining Table\",\"stock\":12},{\"sku\":\"FUR005\",\"name\":\"Coffee Table\",\"stock\":0},{\"sku\":\"FUR006\",\"name\":\"Side Table\",\"stock\":3},{\"sku\":\"FUR007\",\"name\":\"Study Desk\",\"stock\":16},{\"sku\":\"FUR008\",\"name\":\"Office Desk\",\"stock\":16},{\"sku\":\"FUR009\",\"name\":\"Bookshelf\",\"stock\":93},{\"sku\":\"FUR010\",\"name\":\"Wardrobe\",\"stock\":2},{\"sku\":\"FUR011\",\"name\":\"Sofa 2-Seater\",\"stock\":8},{\"sku\":\"FUR012\",\"name\":\"Sofa 3-Seater\",\"stock\":8},{\"sku\":\"FUR013\",\"name\":\"L-Shaped Sofa\",\"stock\":2},{\"sku\":\"FUR014\",\"name\":\"TV Unit\",\"stock\":26},{\"sku\":\"FUR015\",\"name\":\"TV Cabinet\",\"stock\":20},{\"sku\":\"FUR016\",\"name\":\"Bed Queen Size\",\"stock\":16},{\"sku\":\"FUR017\",\"name\":\"Bed King Size\",\"stock\":12},{\"sku\":\"FUR018\",\"name\":\"Bed Single\",\"stock\":20},{\"sku\":\"FUR019\",\"name\":\"Bedside Table\",\"stock\":40},{\"sku\":\"FUR020\",\"name\":\"Shoe Rack\",\"stock\":12},{\"sku\":\"FUR027\",\"name\":\"Folding Chair\",\"stock\":51},{\"sku\":\"FUR040\",\"name\":\"Dining Bench\",\"stock\":8},{\"sku\":\"FUR080\",\"name\":\"Reclining Sofa\",\"stock\":10},{\"sku\":\"FUR120\",\"name\":\"Extendable Dining Table\",\"stock\":8},{\"sku\":\"FUR021\",\"name\":\"Bar Stool\",\"stock\":25},{\"sku\":\"FUR022\",\"name\":\"Armchair\",\"stock\":15},{\"sku\":\"FUR023\",\"name\":\"Rocking Chair\",\"stock\":12},{\"sku\":\"FUR024\",\"name\":\"Bean Bag Chair\",\"stock\":20},{\"sku\":\"FUR025\",\"name\":\"Gaming Chair\",\"stock\":10},{\"sku\":\"FUR026\",\"name\":\"Director's Chair\",\"stock\":8},{\"sku\":\"FUR028\",\"name\":\"Wingback Chair\",\"stock\":7},{\"sku\":\"FUR029\",\"name\":\"Lounge Chair\",\"stock\":9},{\"sku\":\"FUR030\",\"name\":\"Dining Chair\",\"stock\":35},{\"sku\":\"FUR031\",\"name\":\"Console Table\",\"stock\":14},{\"sku\":\"FUR032\",\"name\":\"Accent Table\",\"stock\":18},{\"sku\":\"FUR033\",\"name\":\"Nesting Tables\",\"stock\":12},{\"sku\":\"FUR034\",\"name\":\"Outdoor Table\",\"stock\":10},{\"sku\":\"FUR035\",\"name\":\"Folding Table\",\"stock\":22},{\"sku\":\"FUR036\",\"name\":\"Computer Desk\",\"stock\":16},{\"sku\":\"FUR037\",\"name\":\"Writing Desk\",\"stock\":11},{\"sku\":\"FUR038\",\"name\":\"Corner Desk\",\"stock\":9},{\"sku\":\"FUR039\",\"name\":\"Standing Desk\",\"stock\":8},{\"sku\":\"FUR041\",\"name\":\"Sectional Sofa\",\"stock\":6},{\"sku\":\"FUR042\",\"name\":\"Loveseat\",\"stock\":10},{\"sku\":\"FUR043\",\"name\":\"Chaise Lounge\",\"stock\":5},{\"sku\":\"FUR044\",\"name\":\"Convertible Sofa\",\"stock\":7},{\"sku\":\"FUR045\",\"name\":\"Futon\",\"stock\":12},{\"sku\":\"FUR046\",\"name\":\"Sleeper Sofa\",\"stock\":4},{\"sku\":\"FUR047\",\"name\":\"Chesterfield Sofa\",\"stock\":3},{\"sku\":\"FUR048\",\"name\":\"Mid-Century Sofa\",\"stock\":6},{\"sku\":\"FUR049\",\"name\":\"Bunk Bed\",\"stock\":5},{\"sku\":\"FUR050\",\"name\":\"Trundle Bed\",\"stock\":4},{\"sku\":\"FUR051\",\"name\":\"Canopy Bed\",\"stock\":3},{\"sku\":\"FUR052\",\"name\":\"Platform Bed\",\"stock\":10},{\"sku\":\"FUR053\",\"name\":\"Adjustable Bed\",\"stock\":6},{\"sku\":\"FUR054\",\"name\":\"Daybed\",\"stock\":7},{\"sku\":\"FUR055\",\"name\":\"Murphy Bed\",\"stock\":2},{\"sku\":\"FUR056\",\"name\":\"Four-Poster Bed\",\"stock\":4},{\"sku\":\"FUR057\",\"name\":\"Chest of Drawers\",\"stock\":12},{\"sku\":\"FUR058\",\"name\":\"Dresser\",\"stock\":15},{\"sku\":\"FUR059\",\"name\":\"Nightstand\",\"stock\":20},{\"sku\":\"FUR060\",\"name\":\"Entertainment Center\",\"stock\":8},{\"sku\":\"FUR061\",\"name\":\"Storage Ottoman\",\"stock\":14},{\"sku\":\"FUR062\",\"name\":\"Bookcase\",\"stock\":18},{\"sku\":\"FUR063\",\"name\":\"Sideboard\",\"stock\":10},{\"sku\":\"FUR064\",\"name\":\"Cabinet\",\"stock\":11},{\"sku\":\"FUR065\",\"name\":\"Wine Rack\",\"stock\":7},{\"sku\":\"FUR066\",\"name\":\"Patio Chair\",\"stock\":16},{\"sku\":\"FUR067\",\"name\":\"Outdoor Sofa\",\"stock\":5},{\"sku\":\"FUR068\",\"name\":\"Hammock\",\"stock\":8},{\"sku\":\"FUR069\",\"name\":\"Picnic Table\",\"stock\":6},{\"sku\":\"FUR070\",\"name\":\"Adirondack Chair\",\"stock\":12},{\"sku\":\"FUR071\",\"name\":\"Outdoor Bench\",\"stock\":10},{\"sku\":\"FUR072\",\"name\":\"Sun Lounger\",\"stock\":9},{\"sku\":\"FUR073\",\"name\":\"Kids Bed\",\"stock\":8},{\"sku\":\"FUR074\",\"name\":\"Kids Chair\",\"stock\":15},{\"sku\":\"FUR075\",\"name\":\"Kids Table\",\"stock\":12},{\"sku\":\"FUR076\",\"name\":\"Toy Chest\",\"stock\":10},{\"sku\":\"FUR077\",\"name\":\"Bunk Bed with Desk\",\"stock\":4},{\"sku\":\"FUR078\",\"name\":\"Kids Bookshelf\",\"stock\":14},{\"sku\":\"FUR079\",\"name\":\"Executive Chair\",\"stock\":10},{\"sku\":\"FUR081\",\"name\":\"Conference Table\",\"stock\":3},{\"sku\":\"FUR082\",\"name\":\"Filing Cabinet\",\"stock\":8},{\"sku\":\"FUR083\",\"name\":\"Desk Organizer\",\"stock\":20},{\"sku\":\"FUR084\",\"name\":\"Whiteboard\",\"stock\":7},{\"sku\":\"FUR085\",\"name\":\"Room Divider\",\"stock\":5},{\"sku\":\"FUR086\",\"name\":\"Mirror\",\"stock\":12},{\"sku\":\"FUR087\",\"name\":\"Wall Shelf\",\"stock\":18},{\"sku\":\"FUR088\",\"name\":\"Coat Rack\",\"stock\":10},{\"sku\":\"FUR089\",\"name\":\"Ladder Shelf\",\"stock\":6},{\"sku\":\"FUR090\",\"name\":\"Floating Shelf\",\"stock\":15},{\"sku\":\"FUR091\",\"name\":\"Bar Cart\",\"stock\":8},{\"sku\":\"FUR092\",\"name\":\"TV Stand\",\"stock\":11},{\"sku\":\"FUR093\",\"name\":\"Magazine Rack\",\"stock\":9},{\"sku\":\"FUR094\",\"name\":\"Plant Stand\",\"stock\":14},{\"sku\":\"FUR095\",\"name\":\"Stool\",\"stock\":20},{\"sku\":\"FUR096\",\"name\":\"Foldable Desk\",\"stock\":12},{\"sku\":\"FUR097\",\"name\":\"Wall-Mounted Desk\",\"stock\":7},{\"sku\":\"FUR098\",\"name\":\"Corner Shelf\",\"stock\":10},{\"sku\":\"FUR099\",\"name\":\"Underbed Storage\",\"stock\":8},{\"sku\":\"FUR100\",\"name\":\"Jewelry Armoire\",\"stock\":4},{\"sku\":\"FUR101\",\"name\":\"Shoe Cabinet\",\"stock\":11},{\"sku\":\"FUR102\",\"name\":\"Hat Stand\",\"stock\":4},{\"sku\":\"FUR103\",\"name\":\"Umbrella Stand\",\"stock\":9},{\"sku\":\"FUR104\",\"name\":\"Pet Bed\",\"stock\":15},{\"sku\":\"FUR105\",\"name\":\"Pet House\",\"stock\":7},{\"sku\":\"FUR106\",\"name\":\"Kitchen Island\",\"stock\":4},{\"sku\":\"FUR107\",\"name\":\"Breakfast Bar\",\"stock\":6},{\"sku\":\"FUR108\",\"name\":\"Wet Bar\",\"stock\":3},{\"sku\":\"FUR109\",\"name\":\"Vanity\",\"stock\":8},{\"sku\":\"FUR110\",\"name\":\"Medicine Cabinet\",\"stock\":10},{\"sku\":\"FUR111\",\"name\":\"Linen Cabinet\",\"stock\":7},{\"sku\":\"FUR112\",\"name\":\"Spice Rack\",\"stock\":12},{\"sku\":\"FUR113\",\"name\":\"Cutlery Organizer\",\"stock\":15},{\"sku\":\"FUR114\",\"name\":\"Kitchen Cart\",\"stock\":9},{\"sku\":\"FUR115\",\"name\":\"Bakers Rack\",\"stock\":6},{\"sku\":\"FUR116\",\"name\":\"Pantry Cabinet\",\"stock\":5},{\"sku\":\"FUR117\",\"name\":\"Wine Cabinet\",\"stock\":4},{\"sku\":\"FUR118\",\"name\":\"Display Cabinet\",\"stock\":8},{\"sku\":\"FUR119\",\"name\":\"Curio Cabinet\",\"stock\":3}]",
+    "response_json": [
+      {
+        "sku": "FUR001",
+        "name": "Wooden Chair",
+        "stock": 18
+      },
+      {
+        "sku": "FUR002",
+        "name": "Office Chair",
+        "stock": 58
+      },
+      {
+        "sku": "FUR003",
+        "name": "Recliner Chair",
+        "stock": 0
+      },
+      {
+        "sku": "FUR004",
+        "name": "Dining Table",
+        "stock": 12
+      },
+      {
+        "sku": "FUR005",
+        "name": "Coffee Table",
+        "stock": 0
+      },
+      {
+        "sku": "FUR006",
+        "name": "Side Table",
+        "stock": 3
+      },
+      {
+        "sku": "FUR007",
+        "name": "Study Desk",
+        "stock": 16
+      },
+      {
+        "sku": "FUR008",
+        "name": "Office Desk",
+        "stock": 16
+      },
+      {
+        "sku": "FUR009",
+        "name": "Bookshelf",
+        "stock": 93
+      },
+      {
+        "sku": "FUR010",
+        "name": "Wardrobe",
+        "stock": 2
+      },
+      {
+        "sku": "FUR011",
+        "name": "Sofa 2-Seater",
+        "stock": 8
+      },
+      {
+        "sku": "FUR012",
+        "name": "Sofa 3-Seater",
+        "stock": 8
+      },
+      {
+        "sku": "FUR013",
+        "name": "L-Shaped Sofa",
+        "stock": 2
+      },
+      {
+        "sku": "FUR014",
+        "name": "TV Unit",
+        "stock": 26
+      },
+      {
+        "sku": "FUR015",
+        "name": "TV Cabinet",
+        "stock": 20
+      },
+      {
+        "sku": "FUR016",
+        "name": "Bed Queen Size",
+        "stock": 16
+      },
+      {
+        "sku": "FUR017",
+        "name": "Bed King Size",
+        "stock": 12
+      },
+      {
+        "sku": "FUR018",
+        "name": "Bed Single",
+        "stock": 20
+      },
+      {
+        "sku": "FUR019",
+        "name": "Bedside Table",
+        "stock": 40
+      },
+      {
+        "sku": "FUR020",
+        "name": "Shoe Rack",
+        "stock": 12
+      },
+      {
+        "sku": "FUR027",
+        "name": "Folding Chair",
+        "stock": 51
+      },
+      {
+        "sku": "FUR040",
+        "name": "Dining Bench",
+        "stock": 8
+      },
+      {
+        "sku": "FUR080",
+        "name": "Reclining Sofa",
+        "stock": 10
+      },
+      {
+        "sku": "FUR120",
+        "name": "Extendable Dining Table",
+        "stock": 8
+      },
+      {
+        "sku": "FUR021",
+        "name": "Bar Stool",
+        "stock": 25
+      },
+      {
+        "sku": "FUR022",
+        "name": "Armchair",
+        "stock": 15
+      },
+      {
+        "sku": "FUR023",
+        "name": "Rocking Chair",
+        "stock": 12
+      },
+      {
+        "sku": "FUR024",
+        "name": "Bean Bag Chair",
+        "stock": 20
+      },
+      {
+        "sku": "FUR025",
+        "name": "Gaming Chair",
+        "stock": 10
+      },
+      {
+        "sku": "FUR026",
+        "name": "Director's Chair",
+        "stock": 8
+      },
+      {
+        "sku": "FUR028",
+        "name": "Wingback Chair",
+        "stock": 7
+      },
+      {
+        "sku": "FUR029",
+        "name": "Lounge Chair",
+        "stock": 9
+      },
+      {
+        "sku": "FUR030",
+        "name": "Dining Chair",
+        "stock": 35
+      },
+      {
+        "sku": "FUR031",
+        "name": "Console Table",
+        "stock": 14
+      },
+      {
+        "sku": "FUR032",
+        "name": "Accent Table",
+        "stock": 18
+      },
+      {
+        "sku": "FUR033",
+        "name": "Nesting Tables",
+        "stock": 12
+      },
+      {
+        "sku": "FUR034",
+        "name": "Outdoor Table",
+        "stock": 10
+      },
+      {
+        "sku": "FUR035",
+        "name": "Folding Table",
+        "stock": 22
+      },
+      {
+        "sku": "FUR036",
+        "name": "Computer Desk",
+        "stock": 16
+      },
+      {
+        "sku": "FUR037",
+        "name": "Writing Desk",
+        "stock": 11
+      },
+      {
+        "sku": "FUR038",
+        "name": "Corner Desk",
+        "stock": 9
+      },
+      {
+        "sku": "FUR039",
+        "name": "Standing Desk",
+        "stock": 8
+      },
+      {
+        "sku": "FUR041",
+        "name": "Sectional Sofa",
+        "stock": 6
+      },
+      {
+        "sku": "FUR042",
+        "name": "Loveseat",
+        "stock": 10
+      },
+      {
+        "sku": "FUR043",
+        "name": "Chaise Lounge",
+        "stock": 5
+      },
+      {
+        "sku": "FUR044",
+        "name": "Convertible Sofa",
+        "stock": 7
+      },
+      {
+        "sku": "FUR045",
+        "name": "Futon",
+        "stock": 12
+      },
+      {
+        "sku": "FUR046",
+        "name": "Sleeper Sofa",
+        "stock": 4
+      },
+      {
+        "sku": "FUR047",
+        "name": "Chesterfield Sofa",
+        "stock": 3
+      },
+      {
+        "sku": "FUR048",
+        "name": "Mid-Century Sofa",
+        "stock": 6
+      },
+      {
+        "sku": "FUR049",
+        "name": "Bunk Bed",
+        "stock": 5
+      },
+      {
+        "sku": "FUR050",
+        "name": "Trundle Bed",
+        "stock": 4
+      },
+      {
+        "sku": "FUR051",
+        "name": "Canopy Bed",
+        "stock": 3
+      },
+      {
+        "sku": "FUR052",
+        "name": "Platform Bed",
+        "stock": 10
+      },
+      {
+        "sku": "FUR053",
+        "name": "Adjustable Bed",
+        "stock": 6
+      },
+      {
+        "sku": "FUR054",
+        "name": "Daybed",
+        "stock": 7
+      },
+      {
+        "sku": "FUR055",
+        "name": "Murphy Bed",
+        "stock": 2
+      },
+      {
+        "sku": "FUR056",
+        "name": "Four-Poster Bed",
+        "stock": 4
+      },
+      {
+        "sku": "FUR057",
+        "name": "Chest of Drawers",
+        "stock": 12
+      },
+      {
+        "sku": "FUR058",
+        "name": "Dresser",
+        "stock": 15
+      },
+      {
+        "sku": "FUR059",
+        "name": "Nightstand",
+        "stock": 20
+      },
+      {
+        "sku": "FUR060",
+        "name": "Entertainment Center",
+        "stock": 8
+      },
+      {
+        "sku": "FUR061",
+        "name": "Storage Ottoman",
+        "stock": 14
+      },
+      {
+        "sku": "FUR062",
+        "name": "Bookcase",
+        "stock": 18
+      },
+      {
+        "sku": "FUR063",
+        "name": "Sideboard",
+        "stock": 10
+      },
+      {
+        "sku": "FUR064",
+        "name": "Cabinet",
+        "stock": 11
+      },
+      {
+        "sku": "FUR065",
+        "name": "Wine Rack",
+        "stock": 7
+      },
+      {
+        "sku": "FUR066",
+        "name": "Patio Chair",
+        "stock": 16
+      },
+      {
+        "sku": "FUR067",
+        "name": "Outdoor Sofa",
+        "stock": 5
+      },
+      {
+        "sku": "FUR068",
+        "name": "Hammock",
+        "stock": 8
+      },
+      {
+        "sku": "FUR069",
+        "name": "Picnic Table",
+        "stock": 6
+      },
+      {
+        "sku": "FUR070",
+        "name": "Adirondack Chair",
+        "stock": 12
+      },
+      {
+        "sku": "FUR071",
+        "name": "Outdoor Bench",
+        "stock": 10
+      },
+      {
+        "sku": "FUR072",
+        "name": "Sun Lounger",
+        "stock": 9
+      },
+      {
+        "sku": "FUR073",
+        "name": "Kids Bed",
+        "stock": 8
+      },
+      {
+        "sku": "FUR074",
+        "name": "Kids Chair",
+        "stock": 15
+      },
+      {
+        "sku": "FUR075",
+        "name": "Kids Table",
+        "stock": 12
+      },
+      {
+        "sku": "FUR076",
+        "name": "Toy Chest",
+        "stock": 10
+      },
+      {
+        "sku": "FUR077",
+        "name": "Bunk Bed with Desk",
+        "stock": 4
+      },
+      {
+        "sku": "FUR078",
+        "name": "Kids Bookshelf",
+        "stock": 14
+      },
+      {
+        "sku": "FUR079",
+        "name": "Executive Chair",
+        "stock": 10
+      },
+      {
+        "sku": "FUR081",
+        "name": "Conference Table",
+        "stock": 3
+      },
+      {
+        "sku": "FUR082",
+        "name": "Filing Cabinet",
+        "stock": 8
+      },
+      {
+        "sku": "FUR083",
+        "name": "Desk Organizer",
+        "stock": 20
+      },
+      {
+        "sku": "FUR084",
+        "name": "Whiteboard",
+        "stock": 7
+      },
+      {
+        "sku": "FUR085",
+        "name": "Room Divider",
+        "stock": 5
+      },
+      {
+        "sku": "FUR086",
+        "name": "Mirror",
+        "stock": 12
+      },
+      {
+        "sku": "FUR087",
+        "name": "Wall Shelf",
+        "stock": 18
+      },
+      {
+        "sku": "FUR088",
+        "name": "Coat Rack",
+        "stock": 10
+      },
+      {
+        "sku": "FUR089",
+        "name": "Ladder Shelf",
+        "stock": 6
+      },
+      {
+        "sku": "FUR090",
+        "name": "Floating Shelf",
+        "stock": 15
+      },
+      {
+        "sku": "FUR091",
+        "name": "Bar Cart",
+        "stock": 8
+      },
+      {
+        "sku": "FUR092",
+        "name": "TV Stand",
+        "stock": 11
+      },
+      {
+        "sku": "FUR093",
+        "name": "Magazine Rack",
+        "stock": 9
+      },
+      {
+        "sku": "FUR094",
+        "name": "Plant Stand",
+        "stock": 14
+      },
+      {
+        "sku": "FUR095",
+        "name": "Stool",
+        "stock": 20
+      },
+      {
+        "sku": "FUR096",
+        "name": "Foldable Desk",
+        "stock": 12
+      },
+      {
+        "sku": "FUR097",
+        "name": "Wall-Mounted Desk",
+        "stock": 7
+      },
+      {
+        "sku": "FUR098",
+        "name": "Corner Shelf",
+        "stock": 10
+      },
+      {
+        "sku": "FUR099",
+        "name": "Underbed Storage",
+        "stock": 8
+      },
+      {
+        "sku": "FUR100",
+        "name": "Jewelry Armoire",
+        "stock": 4
+      },
+      {
+        "sku": "FUR101",
+        "name": "Shoe Cabinet",
+        "stock": 11
+      },
+      {
+        "sku": "FUR102",
+        "name": "Hat Stand",
+        "stock": 4
+      },
+      {
+        "sku": "FUR103",
+        "name": "Umbrella Stand",
+        "stock": 9
+      },
+      {
+        "sku": "FUR104",
+        "name": "Pet Bed",
+        "stock": 15
+      },
+      {
+        "sku": "FUR105",
+        "name": "Pet House",
+        "stock": 7
+      },
+      {
+        "sku": "FUR106",
+        "name": "Kitchen Island",
+        "stock": 4
+      },
+      {
+        "sku": "FUR107",
+        "name": "Breakfast Bar",
+        "stock": 6
+      },
+      {
+        "sku": "FUR108",
+        "name": "Wet Bar",
+        "stock": 3
+      },
+      {
+        "sku": "FUR109",
+        "name": "Vanity",
+        "stock": 8
+      },
+      {
+        "sku": "FUR110",
+        "name": "Medicine Cabinet",
+        "stock": 10
+      },
+      {
+        "sku": "FUR111",
+        "name": "Linen Cabinet",
+        "stock": 7
+      },
+      {
+        "sku": "FUR112",
+        "name": "Spice Rack",
+        "stock": 12
+      },
+      {
+        "sku": "FUR113",
+        "name": "Cutlery Organizer",
+        "stock": 15
+      },
+      {
+        "sku": "FUR114",
+        "name": "Kitchen Cart",
+        "stock": 9
+      },
+      {
+        "sku": "FUR115",
+        "name": "Bakers Rack",
+        "stock": 6
+      },
+      {
+        "sku": "FUR116",
+        "name": "Pantry Cabinet",
+        "stock": 5
+      },
+      {
+        "sku": "FUR117",
+        "name": "Wine Cabinet",
+        "stock": 4
+      },
+      {
+        "sku": "FUR118",
+        "name": "Display Cabinet",
+        "stock": 8
+      },
+      {
+        "sku": "FUR119",
+        "name": "Curio Cabinet",
+        "stock": 3
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS02 Update Stock Valid",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR001",
+    "request_body": {
+      "stock": 20
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.064502",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR001\",\"name\":\"Wooden Chair\",\"stock\":20}",
+    "response_json": {
+      "sku": "FUR001",
+      "name": "Wooden Chair",
+      "stock": 20
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS03 Place Order Single Item",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Rahul",
+      "items": [
+        {
+          "sku": "FUR001",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.091494",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":56,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 56,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS04 Place Order Multiple Items",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Amit",
+      "items": [
+        {
+          "sku": "FUR002",
+          "qty": 2
+        },
+        {
+          "sku": "FUR003",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.141621",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"OUT_OF_STOCK\",\"message\":\"Requested quantity not available\",\"sku\":\"FUR003\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "OUT_OF_STOCK",
+        "message": "Requested quantity not available",
+        "sku": "FUR003"
+      }
+    },
+    "result": "FAIL"
+  },
+  {
+    "test_name": "POS05 Place Order Max Qty",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Riya",
+      "items": [
+        {
+          "sku": "FUR004",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.162017",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":57,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 57,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS06 Get Order Detail",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/orders/1",
+    "request_body": null,
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.190752",
+    "actual_status": 200,
+    "response_text": "{\"id\":1,\"customer_name\":\"Rahul\",\"status\":\"CONFIRMED\",\"total_items\":2,\"items\":[{\"sku\":\"FUR003\",\"quantity\":2}]}",
+    "response_json": {
+      "id": 1,
+      "customer_name": "Rahul",
+      "status": "CONFIRMED",
+      "total_items": 2,
+      "items": [
+        {
+          "sku": "FUR003",
+          "quantity": 2
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS07 Update Stock to 0",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR005",
+    "request_body": {
+      "stock": 0
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.204325",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR005\",\"name\":\"Coffee Table\",\"stock\":0}",
+    "response_json": {
+      "sku": "FUR005",
+      "name": "Coffee Table",
+      "stock": 0
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS08 Reduce Stock",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR006",
+    "request_body": {
+      "stock": 5
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.216493",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR006\",\"name\":\"Side Table\",\"stock\":5}",
+    "response_json": {
+      "sku": "FUR006",
+      "name": "Side Table",
+      "stock": 5
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS09 Place Order Exact Stock",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Kunal",
+      "items": [
+        {
+          "sku": "FUR006",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.236860",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":58,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 58,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS10 Place Order Different SKUs",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Meena",
+      "items": [
+        {
+          "sku": "FUR007",
+          "qty": 2
+        },
+        {
+          "sku": "FUR008",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.266743",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":59,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 59,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS11 Get Health",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/health",
+    "request_body": null,
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.298728",
+    "actual_status": 200,
+    "response_text": "{\"status\":\"ok\"}",
+    "response_json": {
+      "status": "ok"
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS12 Root Endpoint",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/",
+    "request_body": null,
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.319279",
+    "actual_status": 200,
+    "response_text": "{\"message\":\"OrderProcessingAPI running\",\"version\":\"1.0.0\",\"environment\":\"development\"}",
+    "response_json": {
+      "message": "OrderProcessingAPI running",
+      "version": "1.0.0",
+      "environment": "development"
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS13 Update Stock Large Value",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR009",
+    "request_body": {
+      "stock": 99
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.327493",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR009\",\"name\":\"Bookshelf\",\"stock\":99}",
+    "response_json": {
+      "sku": "FUR009",
+      "name": "Bookshelf",
+      "stock": 99
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS14 Place Order Big Quantity",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Dev",
+      "items": [
+        {
+          "sku": "FUR009",
+          "qty": 3
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.346636",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":60,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 60,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS15 Order Lowercase SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Smriti",
+      "items": [
+        {
+          "sku": "fur010",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.374622",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":61,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 61,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS16 Update Stock Again",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR011",
+    "request_body": {
+      "stock": 10
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.401700",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR011\",\"name\":\"Sofa 2-Seater\",\"stock\":10}",
+    "response_json": {
+      "sku": "FUR011",
+      "name": "Sofa 2-Seater",
+      "stock": 10
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS17 Order Recently Updated SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Vikas",
+      "items": [
+        {
+          "sku": "FUR011",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.451304",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":62,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 62,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS18 Order Only 1 Item",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Shreya",
+      "items": [
+        {
+          "sku": "FUR012",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.478304",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":63,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 63,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS19 Order Another Valid SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Arjun",
+      "items": [
+        {
+          "sku": "FUR013",
+          "qty": 2
+        }
+      ]
+    },
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.505360",
+    "actual_status": 200,
+    "response_text": "{\"order_id\":64,\"status\":\"OrderStatus.CONFIRMED\",\"message\":\"Order validated and stock reserved.\"}",
+    "response_json": {
+      "order_id": 64,
+      "status": "OrderStatus.CONFIRMED",
+      "message": "Order validated and stock reserved."
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "POS20 Get Existing Order",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/orders/2",
+    "request_body": null,
+    "expected_status": 200,
+    "timestamp": "2025-12-28T03:22:18.532348",
+    "actual_status": 200,
+    "response_text": "{\"id\":2,\"customer_name\":\"Rahul\",\"status\":\"CONFIRMED\",\"total_items\":1,\"items\":[{\"sku\":\"FUR003\",\"quantity\":1}]}",
+    "response_json": {
+      "id": 2,
+      "customer_name": "Rahul",
+      "status": "CONFIRMED",
+      "total_items": 1,
+      "items": [
+        {
+          "sku": "FUR003",
+          "quantity": 1
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG01 Invalid SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Sam",
+      "items": [
+        {
+          "sku": "BADSKU",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 400,
+    "timestamp": "2025-12-28T03:22:18.543415",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"INVALID_SKU\",\"message\":\"SKU not found\",\"sku\":\"BADSKU\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "INVALID_SKU",
+        "message": "SKU not found",
+        "sku": "BADSKU"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG02 Out of Stock",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "John",
+      "items": [
+        {
+          "sku": "FUR001",
+          "qty": 99999
+        }
+      ]
+    },
+    "expected_status": 400,
+    "timestamp": "2025-12-28T03:22:18.560940",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"OUT_OF_STOCK\",\"message\":\"Requested quantity not available\",\"sku\":\"FUR001\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "OUT_OF_STOCK",
+        "message": "Requested quantity not available",
+        "sku": "FUR001"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG03 Duplicate SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Ana",
+      "items": [
+        {
+          "sku": "FUR002",
+          "qty": 1
+        },
+        {
+          "sku": "FUR002",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 400,
+    "timestamp": "2025-12-28T03:22:18.578596",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"DUPLICATE_SKU\",\"message\":\"Duplicate SKU in order\",\"sku\":\"FUR002\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "DUPLICATE_SKU",
+        "message": "Duplicate SKU in order",
+        "sku": "FUR002"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG04 Negative Stock",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR001",
+    "request_body": {
+      "stock": -5
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.593388",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"greater_than_equal\",\"loc\":[\"body\",\"stock\"],\"msg\":\"Input should be greater than or equal to 0\",\"input\":-5,\"ctx\":{\"ge\":0}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "greater_than_equal",
+          "loc": [
+            "body",
+            "stock"
+          ],
+          "msg": "Input should be greater than or equal to 0",
+          "input": -5,
+          "ctx": {
+            "ge": 0
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG05 Order Not Found",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/orders/99999",
+    "request_body": null,
+    "expected_status": 404,
+    "timestamp": "2025-12-28T03:22:18.600836",
+    "actual_status": 404,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"ORDER_NOT_FOUND\",\"message\":\"Order does not exist\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "ORDER_NOT_FOUND",
+        "message": "Order does not exist"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG06 Missing Customer Name",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "items": [
+        {
+          "sku": "FUR003",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.610883",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"customer_name\"],\"msg\":\"Field required\",\"input\":{\"items\":[{\"sku\":\"FUR003\",\"qty\":1}]}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "customer_name"
+          ],
+          "msg": "Field required",
+          "input": {
+            "items": [
+              {
+                "sku": "FUR003",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG07 Negative Qty",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Bad",
+      "items": [
+        {
+          "sku": "FUR003",
+          "qty": -1
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.623257",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"greater_than\",\"loc\":[\"body\",\"items\",0,\"qty\"],\"msg\":\"Input should be greater than 0\",\"input\":-1,\"ctx\":{\"gt\":0}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "greater_than",
+          "loc": [
+            "body",
+            "items",
+            0,
+            "qty"
+          ],
+          "msg": "Input should be greater than 0",
+          "input": -1,
+          "ctx": {
+            "gt": 0
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG08 Zero Qty",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Zero",
+      "items": [
+        {
+          "sku": "FUR003",
+          "qty": 0
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.634117",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"greater_than\",\"loc\":[\"body\",\"items\",0,\"qty\"],\"msg\":\"Input should be greater than 0\",\"input\":0,\"ctx\":{\"gt\":0}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "greater_than",
+          "loc": [
+            "body",
+            "items",
+            0,
+            "qty"
+          ],
+          "msg": "Input should be greater than 0",
+          "input": 0,
+          "ctx": {
+            "gt": 0
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG09 Update Stock Negative",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR004",
+    "request_body": {
+      "stock": -5
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.645774",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"greater_than_equal\",\"loc\":[\"body\",\"stock\"],\"msg\":\"Input should be greater than or equal to 0\",\"input\":-5,\"ctx\":{\"ge\":0}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "greater_than_equal",
+          "loc": [
+            "body",
+            "stock"
+          ],
+          "msg": "Input should be greater than or equal to 0",
+          "input": -5,
+          "ctx": {
+            "ge": 0
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG10 Update Invalid SKU",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/WRONGSKU",
+    "request_body": {
+      "stock": 5
+    },
+    "expected_status": 404,
+    "timestamp": "2025-12-28T03:22:18.654776",
+    "actual_status": 404,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"SKU_NOT_FOUND\",\"message\":\"SKU not found: WRONGSKU\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "SKU_NOT_FOUND",
+        "message": "SKU not found: WRONGSKU"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG11 Invalid Body for Stock",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR005",
+    "request_body": {
+      "wrong": 5
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.665117",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"stock\"],\"msg\":\"Field required\",\"input\":{\"wrong\":5}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "stock"
+          ],
+          "msg": "Field required",
+          "input": {
+            "wrong": 5
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG12 Stock Update No Body",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR006",
+    "request_body": null,
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.672974",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\"],\"msg\":\"Field required\",\"input\":null}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body"
+          ],
+          "msg": "Field required",
+          "input": null
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG13 Invalid JSON",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": "{bad json}",
+    "expected_status": 400,
+    "timestamp": "2025-12-28T03:22:18.680235",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"model_attributes_type\",\"loc\":[\"body\"],\"msg\":\"Input should be a valid dictionary or object to extract fields from\",\"input\":\"{bad json}\"}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "model_attributes_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary or object to extract fields from",
+          "input": "{bad json}"
+        }
+      ]
+    },
+    "result": "FAIL"
+  },
+  {
+    "test_name": "NEG14 Missing Items Key",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Test"
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.692533",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"items\"],\"msg\":\"Field required\",\"input\":{\"customer_name\":\"Test\"}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "items"
+          ],
+          "msg": "Field required",
+          "input": {
+            "customer_name": "Test"
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG15 Empty SKU",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Bad",
+      "items": [
+        {
+          "sku": "",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.704604",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"INVALID_SKU\",\"message\":\"SKU not found\",\"sku\":\"\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "INVALID_SKU",
+        "message": "SKU not found",
+        "sku": ""
+      }
+    },
+    "result": "FAIL"
+  },
+  {
+    "test_name": "NEG16 Qty as String",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Bad",
+      "items": [
+        {
+          "sku": "FUR007",
+          "qty": "abc"
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.723493",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"body\",\"items\",0,\"qty\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"abc\"}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "int_parsing",
+          "loc": [
+            "body",
+            "items",
+            0,
+            "qty"
+          ],
+          "msg": "Input should be a valid integer, unable to parse string as an integer",
+          "input": "abc"
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG17 Missing SKU Field",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Bad",
+      "items": [
+        {
+          "qty": 2
+        }
+      ]
+    },
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.734820",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"items\",0,\"sku\"],\"msg\":\"Field required\",\"input\":{\"qty\":2}}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "items",
+            0,
+            "sku"
+          ],
+          "msg": "Field required",
+          "input": {
+            "qty": 2
+          }
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG18 Fetch Order String ID",
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/orders/abc",
+    "request_body": null,
+    "expected_status": 422,
+    "timestamp": "2025-12-28T03:22:18.746297",
+    "actual_status": 422,
+    "response_text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"path\",\"order_id\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"abc\"}]}",
+    "response_json": {
+      "detail": [
+        {
+          "type": "int_parsing",
+          "loc": [
+            "path",
+            "order_id"
+          ],
+          "msg": "Input should be a valid integer, unable to parse string as an integer",
+          "input": "abc"
+        }
+      ]
+    },
+    "result": "PASS"
+  },
+  {
+    "test_name": "NEG19 PATCH No Content-Type",
+    "method": "PATCH",
+    "url": "http://127.0.0.1:8000/inventory/FUR010",
+    "request_body": {
+      "stock": 2
+    },
+    "expected_status": 415,
+    "timestamp": "2025-12-28T03:22:18.754225",
+    "actual_status": 200,
+    "response_text": "{\"sku\":\"FUR010\",\"name\":\"Wardrobe\",\"stock\":2}",
+    "response_json": {
+      "sku": "FUR010",
+      "name": "Wardrobe",
+      "stock": 2
+    },
+    "result": "FAIL"
+  },
+  {
+    "test_name": "NEG20 POST No Content-Type",
+    "method": "POST",
+    "url": "http://127.0.0.1:8000/orders",
+    "request_body": {
+      "customer_name": "Bad",
+      "items": [
+        {
+          "sku": "FUR003",
+          "qty": 1
+        }
+      ]
+    },
+    "expected_status": 415,
+    "timestamp": "2025-12-28T03:22:18.776501",
+    "actual_status": 400,
+    "response_text": "{\"detail\":{\"success\":false,\"code\":\"OUT_OF_STOCK\",\"message\":\"Requested quantity not available\",\"sku\":\"FUR003\"}}",
+    "response_json": {
+      "detail": {
+        "success": false,
+        "code": "OUT_OF_STOCK",
+        "message": "Requested quantity not available",
+        "sku": "FUR003"
+      }
+    },
+    "result": "FAIL"
+  }
+]
