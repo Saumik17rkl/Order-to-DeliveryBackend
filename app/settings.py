@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     # CORS (SAFE DEFAULTS)
     # ======================
     cors_origins: List[str] = Field(
-        default=["http://localhost:3000"],
+        default=["*"],
         alias="CORS_ORIGINS",
     )
     cors_methods: List[str] = Field(
@@ -65,6 +65,20 @@ class Settings(BaseSettings):
     # LOGGING
     # ======================
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+
+    # ======================
+    # MONGODB
+    # ======================
+    mongodb_uri: str = Field(
+        default="",
+        alias="MONGODB_URI",
+        description="MongoDB connection string (mongodb+srv://...)",
+    )
+    mongodb_db: str = Field(
+        default="order_to_delivery",
+        alias="MONGODB_DB",
+        description="MongoDB database name",
+    )
 
 
 @lru_cache

@@ -9,8 +9,7 @@ from fastapi.responses import JSONResponse
 from loguru import logger
 
 from app.settings import settings
-from app.database import Base, engine, SessionLocal
-from app import models
+from app.mongo import get_mongo_db
 from app.routers import orders, inventory
 
 
@@ -69,7 +68,6 @@ app = FastAPI(
 )
 
 
-
 # VALIDATION ERROR HANDLER
 
 @app.exception_handler(RequestValidationError)
@@ -88,27 +86,28 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-
 # CORS
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=settings.cors_origins,
     allow_credentials=settings.cors_credentials,
     allow_methods=settings.cors_methods,
     allow_headers=settings.cors_headers,
 )
 
 
-
-# DB INIT
-
-Base.metadata.create_all(bind=engine)
-
-
-
 def seed_inventory():
-    db = SessionLocal()
     try:
-        existing = {x.sku for x in db.query(models.Inventory).all()}
+        if not settings.mongodb_uri:
+            logger.bind(trace_id="startup").warning("MONGODB_URI not set — skipping MongoDB inventory seeding")
+            return
+
+        db = get_mongo_db()
+        inventory = db["inventory"]
+
+        inventory.create_index("sku", unique=True)
+
+        existing = set(inventory.distinct("sku"))
         furniture_items = [
                 ("FUR001", "Wooden Chair", 30),
                 ("FUR002", "Office Chair", 60),
@@ -251,30 +250,24 @@ def seed_inventory():
                 ("FUR119", "Curio Cabinet", 3),
     ]
 
-
-        new_items = [
-            models.Inventory(sku=sku, name=name, stock=stock)
+        new_docs = [
+            {"sku": sku, "name": name, "stock": stock}
             for sku, name, stock in furniture_items
             if sku not in existing
         ]
 
-        if new_items:
-            db.add_all(new_items)
-            db.commit()
+        if new_docs:
+            inventory.insert_many(new_docs, ordered=False)
             logger.bind(trace_id="startup").success(
-                f"seeded {len(new_items)} inventory items"
+                f"seeded {len(new_docs)} inventory items"
             )
         else:
             logger.bind(trace_id="startup").info("inventory already seeded — skipping")
 
     except Exception:
-        db.rollback()
         logger.bind(trace_id="startup").exception("error seeding inventory")
-    finally:
-        db.close()
 
 seed_inventory()
-
 
 
 # TRACE-ID MIDDLEWARE

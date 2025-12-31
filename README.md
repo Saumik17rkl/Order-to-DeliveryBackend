@@ -7,17 +7,15 @@ A FastAPI-based backend service for managing orders and inventory in an order-to
 - **Order Management**: Create and track orders with status updates
 - **Inventory Management**: Manage product inventory with stock tracking
 - **RESTful API**: Built with FastAPI for high performance and async support
-- **Database**: SQLite with SQLAlchemy ORM
-- **Migrations**: Alembic for database migrations
+- **Database**: MongoDB (Atlas) using PyMongo
 - **Logging**: Centralized logging with Loguru
 - **Environment-based Configuration**: Using Pydantic settings
 
 ## Tech Stack
 
 - **Framework**: FastAPI
-- **Database**: SQLite
-- **ORM**: SQLAlchemy 2.0+
-- **Migrations**: Alembic
+- **Database**: MongoDB Atlas
+- **Driver**: PyMongo
 - **Logging**: Loguru
 - **Environment Management**: python-dotenv
 
@@ -50,21 +48,17 @@ A FastAPI-based backend service for managing orders and inventory in an order-to
 4. **Set up environment variables**
    Create a `.env` file in the root directory with the following variables:
    ```env
-   DATABASE_URL=sqlite:///./orders.db
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/?retryWrites=true&w=majority&appName=<appName>
+   MONGODB_DB=order_to_delivery
    LOG_LEVEL=INFO
    ```
 
-5. **Initialize the database**
-   ```bash
-   alembic upgrade head
-   ```
-
-6. **Run the application**
+5. **Run the application**
    ```bash
    uvicorn app.main:app --reload
    ```
 
-7. **Access the API documentation**
+6. **Access the API documentation**
    - Swagger UI: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
 
@@ -76,21 +70,16 @@ A FastAPI-based backend service for managing orders and inventory in an order-to
 
 ### Inventory
 - `GET /inventory/` - List all inventory items
-- `GET /inventory/{sku}` - Get inventory item by SKU
-- `POST /inventory/` - Add new inventory item
-- `PUT /inventory/{sku}` - Update inventory item
+- `PATCH /inventory/{sku}` - Update stock for a SKU
 
 ## Project Structure
 
 ```
 backend/
-├── alembic/              # Database migrations
 ├── app/
 │   ├── __init__.py
 │   ├── main.py           # FastAPI application setup
-│   ├── config.py         # Configuration settings
-│   ├── database.py       # Database connection and session management
-│   ├── models.py         # SQLAlchemy models
+│   ├── mongo.py          # MongoDB client helpers
 │   ├── schemas.py        # Pydantic schemas
 │   └── routers/          # API route handlers
 │       ├── __init__.py
@@ -99,7 +88,6 @@ backend/
 ├── tests/                # Test files
 ├── .env.example          # Example environment variables
 ├── .gitignore            # Git ignore file
-├── alembic.ini           # Alembic configuration
 ├── requirements.txt      # Python dependencies
 └── README.md             # This file
 ```
@@ -111,20 +99,22 @@ backend/
 pytest
 ```
 
-### Database Migrations
-- Create a new migration:
-  ```bash
-  alembic revision --autogenerate -m "description of changes"
-  ```
-- Apply migrations:
-  ```bash
-  alembic upgrade head
-  ```
+## Deployment (Render)
 
-### Linting
-```bash
-flake8 .
-```
+1. Create a **Web Service** on Render from this GitHub repo.
+2. Set **Build Command**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Set **Start Command**:
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   ```
+4. Add environment variables on Render:
+   - `MONGODB_URI`
+   - `MONGODB_DB` (e.g. `order_to_delivery`)
+   - `CORS_ORIGINS` (JSON list string)
+5. Set health check path to `/health`.
 
 ## License
 

@@ -1,20 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 from loguru import logger
+from pymongo import ReturnDocument
 
-from app.database import SessionLocal
-from app import models, schemas
+from app.mongo import get_mongo_db
+from app import schemas
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    return get_mongo_db()
+
+
+def get_next_order_id(db) -> int:
+    doc = db["counters"].find_one_and_update(
+        {"_id": "orders"},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+    return int(doc["seq"])
 
 
 def error(detail: dict, status_code: int):
@@ -26,7 +31,7 @@ def error(detail: dict, status_code: int):
 # ==========================
 
 @router.post("/", response_model=schemas.OrderResponse)
-def place_order(payload: schemas.OrderRequest, request: Request, db: Session = Depends(get_db)):
+def place_order(payload: schemas.OrderRequest, request: Request, db=Depends(get_db)):
 
     log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
 
@@ -48,80 +53,75 @@ def place_order(payload: schemas.OrderRequest, request: Request, db: Session = D
             )
         seen.add(item.sku)
 
+    deducted: list[tuple[str, int]] = []
+
     try:
-        with db.begin():
+        inventory = db["inventory"]
 
-            # Validate + lock inventory
-            inventory_items = {}
-            for item in payload.items:
-                inv = (
-                    db.query(models.Inventory)
-                    .filter(models.Inventory.sku == item.sku)
-                    .with_for_update()
-                    .first()
+        for item in payload.items:
+            inv = inventory.find_one({"sku": item.sku}, {"_id": 0, "sku": 1, "stock": 1})
+            if not inv:
+                log.warning(f"Invalid SKU in order → {item.sku}")
+                error(
+                    {
+                        "success": False,
+                        "code": "INVALID_SKU",
+                        "message": "SKU not found",
+                        "sku": item.sku,
+                    },
+                    status.HTTP_400_BAD_REQUEST,
                 )
 
-                if not inv:
-                    log.warning(f"Invalid SKU in order → {item.sku}")
-                    error(
-                        {
-                            "success": False,
-                            "code": "INVALID_SKU",
-                            "message": "SKU not found",
-                            "sku": item.sku,
-                        },
-                        status.HTTP_400_BAD_REQUEST,
-                    )
-
-                if inv.stock < item.qty:
-                    log.warning(
-                        f"Out of stock — SKU={item.sku} requested={item.qty} available={inv.stock}"
-                    )
-                    error(
-                        {
-                            "success": False,
-                            "code": "OUT_OF_STOCK",
-                            "message": "Requested quantity not available",
-                            "sku": item.sku,
-                        },
-                        status.HTTP_400_BAD_REQUEST,
-                    )
-
-                inventory_items[item.sku] = inv
-
-            # Deduct stock
-            for item in payload.items:
-                inventory_items[item.sku].stock -= item.qty
-                db.add(inventory_items[item.sku])
-
-            # Create order
-            order = models.Orders(
-                customer_name=payload.customer_name,
-                status="CONFIRMED",
-                total_items=sum(i.qty for i in payload.items),
+            update = inventory.update_one(
+                {"sku": item.sku, "stock": {"$gte": item.qty}},
+                {"$inc": {"stock": -item.qty}},
             )
-            db.add(order)
-            db.flush()
 
-            # Add order items
-            for item in payload.items:
-                order_item = models.OrderItems(
-                    order_id=order.id, sku=item.sku, quantity=item.qty
+            if update.modified_count == 0:
+                log.warning(
+                    f"Out of stock — SKU={item.sku} requested={item.qty}"
                 )
-                db.add(order_item)
+                error(
+                    {
+                        "success": False,
+                        "code": "OUT_OF_STOCK",
+                        "message": "Requested quantity not available",
+                        "sku": item.sku,
+                    },
+                    status.HTTP_400_BAD_REQUEST,
+                )
 
-            log.success(f"Order CONFIRMED — order_id={order.id}")
+            deducted.append((item.sku, item.qty))
 
-            return {
-                "order_id": order.id,
+        order_id = get_next_order_id(db)
+
+        db["orders"].insert_one(
+            {
+                "order_id": order_id,
+                "customer_name": payload.customer_name,
                 "status": "CONFIRMED",
-                "message": "Order validated and stock reserved.",
+                "total_items": sum(i.qty for i in payload.items),
+                "items": [{"sku": i.sku, "quantity": i.qty} for i in payload.items],
             }
+        )
+
+        log.success(f"Order CONFIRMED — order_id={order_id}")
+
+        return {
+            "order_id": order_id,
+            "status": "CONFIRMED",
+            "message": "Order validated and stock reserved.",
+        }
 
     except HTTPException:
+        for sku, qty in deducted:
+            db["inventory"].update_one({"sku": sku}, {"$inc": {"stock": qty}})
         raise
 
-    except SQLAlchemyError:
+    except Exception:
+        for sku, qty in deducted:
+            db["inventory"].update_one({"sku": sku}, {"$inc": {"stock": qty}})
+
         log.exception("Database error during order placement")
         error(
             {
@@ -138,14 +138,13 @@ def place_order(payload: schemas.OrderRequest, request: Request, db: Session = D
 # ==========================
 
 @router.get("/{order_id}", response_model=schemas.OrderDetail)
-def get_order(order_id: int, request: Request, db: Session = Depends(get_db)):
+def get_order(order_id: int, request: Request, db=Depends(get_db)):
 
     log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
 
-    order = (
-        db.query(models.Orders)
-        .filter(models.Orders.id == order_id)
-        .first()
+    order = db["orders"].find_one(
+        {"order_id": order_id},
+        {"_id": 0, "order_id": 1, "customer_name": 1, "status": 1, "total_items": 1, "items": 1},
     )
 
     if not order:
@@ -159,16 +158,10 @@ def get_order(order_id: int, request: Request, db: Session = Depends(get_db)):
             status.HTTP_404_NOT_FOUND,
         )
 
-    items = (
-        db.query(models.OrderItems)
-        .filter(models.OrderItems.order_id == order.id)
-        .all()
-    )
-
     return {
-        "id": order.id,
-        "customer_name": order.customer_name,
-        "status": order.status,
-        "total_items": order.total_items,
-        "items": [{"sku": i.sku, "quantity": i.quantity} for i in items],
+        "id": order["order_id"],
+        "customer_name": order["customer_name"],
+        "status": order["status"],
+        "total_items": order["total_items"],
+        "items": order.get("items", []),
     }

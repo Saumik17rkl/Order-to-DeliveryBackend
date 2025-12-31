@@ -1,21 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 from loguru import logger
 
-from app.database import SessionLocal
-from app import models, schemas
+from app.mongo import get_mongo_db
+from app import schemas
 
 
 router = APIRouter(prefix="/inventory", tags=["Inventory"])
 
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    return get_mongo_db()
 
 
 def err(detail: dict, code: int):
@@ -27,13 +21,13 @@ def err(detail: dict, code: int):
 # ==========================
 
 @router.get("/", response_model=list[schemas.InventoryItem])
-def list_inventory(request: Request, db: Session = Depends(get_db)):
+def list_inventory(request: Request, db=Depends(get_db)):
 
     log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
 
     log.info("fetching inventory list")
 
-    items = db.query(models.Inventory).all()
+    items = list(db["inventory"].find({}, {"_id": 0, "sku": 1, "name": 1, "stock": 1}))
 
     log.info(f"returned {len(items)} inventory records")
 
@@ -49,7 +43,7 @@ def update_stock(
     sku: str,
     payload: schemas.InventoryUpdate,
     request: Request,
-    db: Session = Depends(get_db)
+    db=Depends(get_db)
 ):
 
     log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
@@ -58,51 +52,45 @@ def update_stock(
 
     log.info(f"stock update request — sku={sku}, new_stock={payload.stock}")
 
-    try:
-        with db.begin():
+    if payload.stock < 0:
+        log.warning(f"negative stock rejected — sku={sku}")
+        err(
+            {
+                "success": False,
+                "code": "invalid_stock_value",
+                "message": "stock cannot be negative",
+                "sku": sku,
+            },
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
 
-            inv = (
-                db.query(models.Inventory)
-                .filter(models.Inventory.sku == sku)
-                .with_for_update()
-                .first()
+    try:
+        result = db["inventory"].update_one(
+            {"sku": sku},
+            {"$set": {"stock": payload.stock}},
+        )
+
+        if result.matched_count == 0:
+            log.warning(f"sku not found — {sku}")
+            err(
+                {
+                    "success": False,
+                    "code": "sku_not_found",
+                    "message": "sku not found",
+                    "sku": sku,
+                },
+                status.HTTP_404_NOT_FOUND,
             )
 
-            if not inv:
-                log.warning(f"sku not found — {sku}")
-                err(
-                    {
-                        "success": False,
-                        "code": "sku_not_found",
-                        "message": "sku not found",
-                        "sku": sku,
-                    },
-                    status.HTTP_404_NOT_FOUND,
-                )
+        inv = db["inventory"].find_one({"sku": sku}, {"_id": 0, "sku": 1, "name": 1, "stock": 1})
 
-            if payload.stock < 0:
-                log.warning(f"negative stock rejected — sku={sku}")
-                err(
-                    {
-                        "success": False,
-                        "code": "invalid_stock_value",
-                        "message": "stock cannot be negative",
-                        "sku": sku,
-                    },
-                    status.HTTP_422_UNPROCESSABLE_ENTITY,
-                )
-
-            inv.stock = payload.stock
-            db.add(inv)
-
-            log.success(f"stock updated — sku={sku}, stock={inv.stock}")
-
-            return inv
+        log.success(f"stock updated — sku={sku}, stock={inv['stock']}")
+        return inv
 
     except HTTPException:
         raise
 
-    except SQLAlchemyError:
+    except Exception:
         log.exception(f"database error while updating sku={sku}")
         err(
             {
