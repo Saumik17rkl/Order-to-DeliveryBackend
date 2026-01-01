@@ -1,59 +1,127 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from loguru import logger
+from typing import List
 
 from app.mongo import get_mongo_db
 from app import schemas
 
 
-router = APIRouter(prefix="/inventory", tags=["Inventory"])
+router = APIRouter(prefix="/inventory", tags=["inventory"])
 
 
-def get_db():
-    return get_mongo_db()
+def normalize_sku(sku: str) -> str:
+    return sku.strip().upper()
 
 
 def err(detail: dict, code: int):
     raise HTTPException(status_code=code, detail=detail)
 
 
+def get_db():
+    return get_mongo_db()
+
+
+def stock_flags(stock: int):
+    stock = max(stock, 0)
+
+    return {
+        "few_left": stock > 0 and stock < 10,
+        "out_of_stock": stock == 0,
+        "status": (
+            "out_of_stock" if stock == 0
+            else "few_left" if stock < 10
+            else "available"
+        ),
+        "stock": stock
+    }
+
+
 # ==========================
-#  LIST INVENTORY
+# LIST INVENTORY
 # ==========================
 
-@router.get("/", response_model=list[schemas.InventoryItem])
+@router.get("/", response_model=List[schemas.InventoryPublic])
 def list_inventory(request: Request, db=Depends(get_db)):
-
-    log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
+    trace = getattr(request.state, "trace_id", None)
+    log = logger.bind(trace_id=trace)
 
     log.info("fetching inventory list")
 
-    items = list(db["inventory"].find({}, {"_id": 0, "sku": 1, "name": 1, "stock": 1}))
+    docs = list(
+        db["inventory"].find(
+            {},
+            {"_id": 0, "sku": 1, "name": 1, "stock": 1},
+        )
+    )
 
-    log.info(f"returned {len(items)} inventory records")
+    result = []
+    for item in docs:
+        flags = stock_flags(item.get("stock", 0))
 
-    return items
+        result.append(
+            {
+                "sku": item["sku"],
+                "name": item["name"],
+                **flags,
+            }
+        )
+
+    log.info(f"returned {len(result)} inventory records")
+    return result
 
 
 # ==========================
-#  UPDATE STOCK
+# GET SINGLE ITEM
 # ==========================
 
-@router.patch("/{sku}", response_model=schemas.InventoryItem)
-def update_stock(
-    sku: str,
-    payload: schemas.InventoryUpdate,
-    request: Request,
-    db=Depends(get_db)
-):
+@router.get("/{sku}", response_model=schemas.InventoryPublic)
+def get_item(sku: str, request: Request, db=Depends(get_db)):
+    trace = getattr(request.state, "trace_id", None)
+    log = logger.bind(trace_id=trace)
 
-    log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
+    sku = normalize_sku(sku)
+    log.info(f"fetch inventory item — {sku}")
 
-    sku = sku.upper().strip()
+    item = db["inventory"].find_one(
+        {"sku": sku},
+        {"_id": 0, "sku": 1, "name": 1, "stock": 1},
+    )
 
+    if not item:
+        err(
+            {
+                "success": False,
+                "code": "sku_not_found",
+                "message": "sku not found",
+                "sku": sku,
+            },
+            status.HTTP_404_NOT_FOUND,
+        )
+
+    flags = stock_flags(item["stock"])
+
+    return {
+        "sku": item["sku"],
+        "name": item["name"],
+        **flags,
+    }
+
+
+# ==========================
+# UPDATE STOCK
+# ==========================
+
+@router.patch("/{sku}", response_model=schemas.InventoryPublic)
+def update_stock(sku: str, payload: schemas.StockUpdate,
+                 request: Request, db=Depends(get_db)):
+
+    trace = getattr(request.state, "trace_id", None)
+    log = logger.bind(trace_id=trace)
+
+    sku = normalize_sku(sku)
     log.info(f"stock update request — sku={sku}, new_stock={payload.stock}")
 
     if payload.stock < 0:
-        log.warning(f"negative stock rejected — sku={sku}")
         err(
             {
                 "success": False,
@@ -65,13 +133,12 @@ def update_stock(
         )
 
     try:
-        result = db["inventory"].update_one(
+        res = db["inventory"].update_one(
             {"sku": sku},
             {"$set": {"stock": payload.stock}},
         )
 
-        if result.matched_count == 0:
-            log.warning(f"sku not found — {sku}")
+        if res.matched_count == 0:
             err(
                 {
                     "success": False,
@@ -82,10 +149,20 @@ def update_stock(
                 status.HTTP_404_NOT_FOUND,
             )
 
-        inv = db["inventory"].find_one({"sku": sku}, {"_id": 0, "sku": 1, "name": 1, "stock": 1})
+        item = db["inventory"].find_one(
+            {"sku": sku},
+            {"_id": 0, "sku": 1, "name": 1, "stock": 1},
+        )
 
-        log.success(f"stock updated — sku={sku}, stock={inv['stock']}")
-        return inv
+        flags = stock_flags(item["stock"])
+
+        log.success(f"stock updated — sku={sku}, stock={flags['stock']}")
+
+        return {
+            "sku": item["sku"],
+            "name": item["name"],
+            **flags,
+        }
 
     except HTTPException:
         raise

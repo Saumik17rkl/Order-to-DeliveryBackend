@@ -1,50 +1,68 @@
 from datetime import datetime
-from typing import List
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, StrictStr, StrictInt
+from pydantic import BaseModel, Field, StrictStr, StrictInt, conint
 
 
 # =========================================================
 # COMMON BASE
 # =========================================================
 class APIModel(BaseModel):
-    model_config = {
-        "from_attributes": True,  # enables orm_mode replacement in v2
-    }
+    model_config = {"from_attributes": True}  # orm_mode replacement
 
 
 # =========================================================
-# INVENTORY
+# INVENTORY SCHEMAS
 # =========================================================
 class InventoryItem(APIModel):
-    sku: StrictStr = Field(..., min_length=1)
+    sku: StrictStr
     name: StrictStr
-    stock: StrictInt = Field(..., ge=0)
+    stock: StrictInt = Field(ge=0)
 
 
-class InventoryUpdate(BaseModel):
-    stock: StrictInt = Field(..., ge=0)
+class StockUpdate(BaseModel):
+    stock: conint(ge=0)
+
+
+class InventoryPublic(BaseModel):
+    sku: str
+    name: str
+    stock: int
+    status: Literal["available", "out_of_stock"]
+    few_left: bool = False
 
 
 # =========================================================
 # ORDER REQUEST
 # =========================================================
-class OrderItemRequest(BaseModel):
+class OrderItemCreate(BaseModel):
     sku: StrictStr = Field(..., min_length=1)
     qty: StrictInt = Field(..., gt=0)
 
 
-class OrderRequest(BaseModel):
+class OrderCreate(BaseModel):
     customer_name: StrictStr = Field(..., min_length=1)
-    items: List[OrderItemRequest] = Field(..., min_length=1)
+    items: List[OrderItemCreate] = Field(..., min_length=1)
 
 
 # =========================================================
 # ORDER RESPONSE (CREATE)
 # =========================================================
-class OrderResponse(APIModel):
+class FulfilledItem(BaseModel):
+    sku: str
+    requested_qty: int
+    fulfilled_qty: int
+    remaining_stock: int
+    few_left: bool
+
+
+class OrderResponse(BaseModel):
+    success: bool
     order_id: int
-    status: str
+    status: Literal["confirmed"]
+    fulfilment_status: Literal["fully fulfilled", "partially fulfilled"]
+    partial_fulfilment: bool
+    items: List[FulfilledItem]
     message: str
 
 
@@ -52,8 +70,8 @@ class OrderResponse(APIModel):
 # ORDER DETAIL (GET ORDER)
 # =========================================================
 class OrderItem(APIModel):
-    sku: StrictStr
-    quantity: StrictInt
+    sku: str
+    quantity: int
 
 
 class OrderDetail(APIModel):
@@ -65,7 +83,7 @@ class OrderDetail(APIModel):
 
 
 # =========================================================
-# AUTH (OPTIONAL)
+# USER / AUTH (OPTIONAL)
 # =========================================================
 class Token(APIModel):
     access_token: str

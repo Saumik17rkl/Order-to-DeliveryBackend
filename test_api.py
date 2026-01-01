@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE = "http://127.0.0.1:8000"
+BASE = "https://order-to-delivery.onrender.com/"
 OUTPUT_FILE = "record.json"
 
 results = []

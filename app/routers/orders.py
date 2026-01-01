@@ -1,29 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from loguru import logger
-from pymongo import ReturnDocument
+from typing import List
+
+from app.database import SessionLocal
+from app import models, schemas
 
 from app.mongo import get_mongo_db
 from app import schemas
 
-router = APIRouter(prefix="/orders", tags=["Orders"])
+router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 def get_db():
-    return get_mongo_db()
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-def get_next_order_id(db) -> int:
-    doc = db["counters"].find_one_and_update(
-        {"_id": "orders"},
-        {"$inc": {"seq": 1}},
-        upsert=True,
-        return_document=ReturnDocument.AFTER,
-    )
-    return int(doc["seq"])
-
-
-def error(detail: dict, status_code: int):
-    raise HTTPException(status_code=status_code, detail=detail)
+def err(detail: dict, code: int):
+    raise HTTPException(status_code=code, detail=detail)
 
 
 # ==========================
@@ -31,86 +30,122 @@ def error(detail: dict, status_code: int):
 # ==========================
 
 @router.post("/", response_model=schemas.OrderResponse)
-def place_order(payload: schemas.OrderRequest, request: Request, db=Depends(get_db)):
+def place_order(
+    payload: schemas.OrderCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    trace = getattr(request.state, "trace_id", None)
+    log = logger.bind(trace_id=trace)
 
-    log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
-
-    # Normalize SKUs + detect duplicates
-    seen = set()
-    for item in payload.items:
-        item.sku = item.sku.upper().strip()
-
-        if item.sku in seen:
-            log.warning(f"Duplicate SKU found in order → {item.sku}")
-            error(
-                {
-                    "success": False,
-                    "code": "DUPLICATE_SKU",
-                    "message": "Duplicate SKU in order",
-                    "sku": item.sku,
-                },
-                status.HTTP_400_BAD_REQUEST,
-            )
-        seen.add(item.sku)
-
-    deducted: list[tuple[str, int]] = []
+    log.info(f"order request from {payload.customer_name}")
 
     try:
-        inventory = db["inventory"]
+        with db.begin():
 
-        for item in payload.items:
-            inv = inventory.find_one({"sku": item.sku}, {"_id": 0, "sku": 1, "stock": 1})
-            if not inv:
-                log.warning(f"Invalid SKU in order → {item.sku}")
-                error(
-                    {
-                        "success": False,
-                        "code": "INVALID_SKU",
-                        "message": "SKU not found",
-                        "sku": item.sku,
-                    },
-                    status.HTTP_400_BAD_REQUEST,
-                )
+            # prevent duplicate SKUs
+            seen = set()
+            for item in payload.items:
+                item.sku = item.sku.upper().strip()
+                if item.sku in seen:
+                    err(
+                        {
+                            "success": False,
+                            "code": "duplicate_sku",
+                            "message": "duplicate sku in order",
+                            "sku": item.sku,
+                        },
+                        status.HTTP_400_BAD_REQUEST,
+                    )
+                seen.add(item.sku)
 
-            update = inventory.update_one(
-                {"sku": item.sku, "stock": {"$gte": item.qty}},
-                {"$inc": {"stock": -item.qty}},
+            # create order record
+            order = models.Orders(
+                customer_name=payload.customer_name,
+                status="pending",
             )
+            db.add(order)
+            db.flush()
 
-            if update.modified_count == 0:
-                log.warning(
-                    f"Out of stock — SKU={item.sku} requested={item.qty}"
+            fulfilment_items: List[dict] = []
+            partial_fulfilment = False
+            fulfilled_total = 0
+
+            for item in payload.items:
+
+                inv = (
+                    db.query(models.Inventory)
+                    .filter(models.Inventory.sku == item.sku)
+                    .with_for_update()
+                    .first()
                 )
-                error(
+
+                if not inv:
+                    err(
+                        {
+                            "success": False,
+                            "code": "invalid_sku",
+                            "message": "sku not found",
+                            "sku": item.sku,
+                        },
+                        status.HTTP_400_BAD_REQUEST,
+                    )
+
+                if inv.stock == 0:
+                    err(
+                        {
+                            "success": False,
+                            "code": "out_of_stock",
+                            "message": "item is out of stock",
+                            "sku": item.sku,
+                        },
+                        status.HTTP_400_BAD_REQUEST,
+                    )
+
+                fulfilled_qty = min(item.qty, inv.stock)
+
+                if fulfilled_qty < item.qty:
+                    partial_fulfilment = True
+
+                inv.stock -= fulfilled_qty
+                fulfilled_total += fulfilled_qty
+
+                db.add(
+                    models.OrderItems(
+                        order_id=order.id,
+                        sku=item.sku,
+                        quantity=fulfilled_qty,
+                    )
+                )
+
+                fulfilment_items.append(
                     {
-                        "success": False,
-                        "code": "OUT_OF_STOCK",
-                        "message": "Requested quantity not available",
                         "sku": item.sku,
-                    },
-                    status.HTTP_400_BAD_REQUEST,
+                        "requested_qty": item.qty,
+                        "fulfilled_qty": fulfilled_qty,
+                        "remaining_stock": max(inv.stock, 0),
+                        "few_left": (inv.stock > 0 and inv.stock < 10),
+                    }
                 )
 
-            deducted.append((item.sku, item.qty))
+            order.status = "confirmed"
+            order.total_items = fulfilled_total
+            db.add(order)
 
-        order_id = get_next_order_id(db)
-
-        db["orders"].insert_one(
-            {
-                "order_id": order_id,
-                "customer_name": payload.customer_name,
-                "status": "CONFIRMED",
-                "total_items": sum(i.qty for i in payload.items),
-                "items": [{"sku": i.sku, "quantity": i.qty} for i in payload.items],
-            }
+        fulfilment_status = (
+            "partially fulfilled" if partial_fulfilment else "fully fulfilled"
         )
 
-        log.success(f"Order CONFIRMED — order_id={order_id}")
+        log.success(f"order confirmed — id={order.id}")
 
         return {
-            "order_id": order_id,
-            "status": "CONFIRMED",
-            "message": "Order validated and stock reserved.",
+            "success": True,
+            "order_id": order.id,
+            "status": "confirmed",
+            "fulfilment_status": fulfilment_status,
+            "partial_fulfilment": partial_fulfilment,
+            "items": fulfilment_items,
+            "message": "order validated and stock reserved",
         }
 
     except HTTPException:
@@ -118,16 +153,13 @@ def place_order(payload: schemas.OrderRequest, request: Request, db=Depends(get_
             db["inventory"].update_one({"sku": sku}, {"$inc": {"stock": qty}})
         raise
 
-    except Exception:
-        for sku, qty in deducted:
-            db["inventory"].update_one({"sku": sku}, {"$inc": {"stock": qty}})
-
-        log.exception("Database error during order placement")
-        error(
+    except SQLAlchemyError:
+        log.exception("database error during order placement")
+        err(
             {
                 "success": False,
-                "code": "DB_ERROR",
-                "message": "Database failure",
+                "code": "db_error",
+                "message": "database failure",
             },
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
@@ -138,30 +170,33 @@ def place_order(payload: schemas.OrderRequest, request: Request, db=Depends(get_
 # ==========================
 
 @router.get("/{order_id}", response_model=schemas.OrderDetail)
-def get_order(order_id: int, request: Request, db=Depends(get_db)):
+def get_order(order_id: int, request: Request, db: Session = Depends(get_db)):
 
     log = logger.bind(trace_id=getattr(request.state, "trace_id", None))
 
-    order = db["orders"].find_one(
-        {"order_id": order_id},
-        {"_id": 0, "order_id": 1, "customer_name": 1, "status": 1, "total_items": 1, "items": 1},
+    order = (
+        db.query(models.Orders)
+        .filter(models.Orders.id == order_id)
+        .first()
     )
 
     if not order:
-        log.warning(f"Order not found — id={order_id}")
-        error(
+        err(
             {
                 "success": False,
-                "code": "ORDER_NOT_FOUND",
-                "message": "Order does not exist",
+                "code": "order_not_found",
+                "message": "order does not exist",
             },
             status.HTTP_404_NOT_FOUND,
         )
 
     return {
-        "id": order["order_id"],
-        "customer_name": order["customer_name"],
-        "status": order["status"],
-        "total_items": order["total_items"],
-        "items": order.get("items", []),
+        "id": order.id,
+        "customer_name": order.customer_name,
+        "status": order.status,
+        "total_items": order.total_items,
+        "items": [
+            {"sku": i.sku, "quantity": i.quantity}
+            for i in order.items
+        ],
     }
