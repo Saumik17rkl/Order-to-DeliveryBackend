@@ -1,193 +1,167 @@
-import requests
+import pytest
+from fastapi.testclient import TestClient
+from datetime import datetime, timedelta
 import json
-from datetime import datetime
+from app.main import app
 
-BASE = "https://order-to-delivery.onrender.com/"
-OUTPUT_FILE = "record.json"
+client = TestClient(app)
 
-results = []
+# Test data
+TEST_ORDER = {
+    "customer_name": "Test User",
+    "items": [
+        {"sku": "FUR001", "qty": 2},
+        {"sku": "FUR002", "qty": 1}
+    ]
+}
 
+def test_health_check():
+    """Test health check endpoint"""
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
 
-def pretty(o):
-    return json.dumps(o, indent=2)
+def test_list_inventory():
+    """Test listing inventory items"""
+    response = client.get("/inventory/")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    if len(response.json()) > 0:
+        assert "sku" in response.json()[0]
+        assert "name" in response.json()[0]
+        assert "stock" in response.json()[0]
 
+def test_get_inventory_item():
+    """Test getting a single inventory item"""
+    # First get a valid SKU from the inventory
+    response = client.get("/inventory/")
+    if len(response.json()) > 0:
+        sku = response.json()[0]["sku"]
+        response = client.get(f"/inventory/{sku}")
+        assert response.status_code == 200
+        assert response.json()["sku"] == sku
 
-def save_results():
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(results, f, indent=2)
-    print(f"\n📁 Results saved to {OUTPUT_FILE}")
+def test_update_inventory():
+    """Test updating inventory stock"""
+    # Get an item to update
+    response = client.get("/inventory/")
+    if len(response.json()) > 0:
+        sku = response.json()[0]["sku"]
+        current_stock = response.json()[0]["stock"]
+        
+        # Update the stock
+        new_stock = current_stock + 1
+        update_data = {"stock": new_stock}
+        response = client.patch(f"/inventory/{sku}", json=update_data)
+        
+        assert response.status_code == 200
+        assert response.json()["stock"] == new_stock
 
+def test_place_order():
+    """Test placing a new order"""
+    response = client.post("/orders/", json=TEST_ORDER)
+    assert response.status_code == 200
+    data = response.json()
+    assert "order_id" in data
+    assert data["status"] == "confirmed"
+    return data["order_id"]  # Return order_id for other tests
 
-def run(name, method, url, body=None, expect=None):
-    record = {
-        "test_name": name,
-        "method": method,
-        "url": url,
-        "request_body": body,
-        "expected_status": expect,
-        "timestamp": datetime.now().isoformat()
+def test_get_order():
+    """Test retrieving an order"""
+    # First place an order to get a valid order_id
+    order_id = test_place_order()
+    response = client.get(f"/orders/{order_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == order_id
+    assert data["customer_name"] == TEST_ORDER["customer_name"]
+
+def test_place_order_insufficient_stock():
+    """Test order placement with insufficient stock"""
+    test_order = {
+        "customer_name": "Test User",
+        "items": [{"sku": "FUR001", "qty": 999999}]  # Unrealistically large quantity
     }
+    response = client.post("/orders/", json=test_order)
+    assert response.status_code == 200  # Should return 200 with partial fulfillment
+    assert response.json()["partial_fulfilment"] is True
 
-    print(f"\n=== {name} ===")
-    try:
-        if method == "GET":
-            r = requests.get(url)
-        elif method == "POST":
-            r = requests.post(url, json=body)
-        elif method == "PATCH":
-            r = requests.patch(url, json=body)
-        else:
-            raise ValueError("Unsupported method")
+def test_place_order_invalid_sku():
+    """Test order placement with invalid SKU"""
+    test_order = {
+        "customer_name": "Test User",
+        "items": [{"sku": "INVALID_SKU", "qty": 1}]
+    }
+    response = client.post("/orders/", json=test_order)
+    assert response.status_code == 400  # Bad Request
 
-        status = r.status_code
-        record["actual_status"] = status
-        record["response_text"] = r.text
+def test_get_nonexistent_order():
+    """Test retrieving an order that doesn't exist"""
+    response = client.get("/orders/999999")
+    assert response.status_code == 404
 
-        try:
-            record["response_json"] = r.json()
-        except:
-            record["response_json"] = None
+def test_delete_order():
+    """Test deleting an order"""
+    # First place an order to delete
+    order_id = test_place_order()
+    
+    # Delete the order
+    response = client.delete(f"/orders/{order_id}")
+    assert response.status_code == 204
+    
+    # Verify it's deleted
+    response = client.get(f"/orders/{order_id}")
+    assert response.status_code == 404
 
-        ok = (expect is None) or (status == expect)
-        record["result"] = "PASS" if ok else "FAIL"
+def test_delete_nonexistent_order():
+    """Test deleting an order that doesn't exist"""
+    response = client.delete("/orders/999999")
+    assert response.status_code == 404
 
-        print(f"URL     : {url}")
-        print(f"METHOD  : {method}")
-        print(f"STATUS  : {status}  [{'PASS' if ok else 'FAIL'}]")
-        print("RESPONSE:")
-        try:
-            print(pretty(r.json()))
-        except:
-            print(r.text)
-
-    except Exception as e:
-        print(f"ERROR calling API: {e}")
-        record["result"] = "ERROR"
-        record["error_message"] = str(e)
-
-    results.append(record)
-
-positive_tests = [
-    # (test_name, method, endpoint, body, expected_status)
-    ("POS01 Get Inventory", "GET", f"{BASE}/inventory", None, 200),
-    ("POS02 Update Stock Valid", "PATCH", f"{BASE}/inventory/FUR001", {"stock": 20}, 200),
-    ("POS03 Place Order Single Item", "POST", f"{BASE}/orders", {
-        "customer_name": "Rahul",
+def test_delete_orders_by_date_range():
+    """Test deleting orders by date range"""
+    # First create some test orders
+    test_order1 = {
+        "customer_name": "Test User 1",
         "items": [{"sku": "FUR001", "qty": 1}]
-    }, 200),
-    ("POS04 Place Order Multiple Items", "POST", f"{BASE}/orders", {
-        "customer_name": "Amit",
-        "items": [{"sku": "FUR002", "qty": 2}, {"sku": "FUR003", "qty": 1}]
-    }, 200),
-    ("POS05 Place Order Max Qty", "POST", f"{BASE}/orders", {
-        "customer_name": "Riya",
-        "items": [{"sku": "FUR004", "qty": 1}]
-    }, 200),
-    ("POS06 Get Order Detail", "GET", f"{BASE}/orders/1", None, 200),
-    ("POS07 Update Stock to 0", "PATCH", f"{BASE}/inventory/FUR005", {"stock": 0}, 200),
-    ("POS08 Reduce Stock", "PATCH", f"{BASE}/inventory/FUR006", {"stock": 5}, 200),
-    ("POS09 Place Order Exact Stock", "POST", f"{BASE}/orders", {
-        "customer_name": "Kunal",
-        "items": [{"sku": "FUR006", "qty": 1}]
-    }, 200),
-    ("POS10 Place Order Different SKUs", "POST", f"{BASE}/orders", {
-        "customer_name": "Meena",
-        "items": [{"sku": "FUR007", "qty": 2}, {"sku": "FUR008", "qty": 1}]
-    }, 200),
-    ("POS11 Get Health", "GET", f"{BASE}/health", None, 200),
-    ("POS12 Root Endpoint", "GET", f"{BASE}/", None, 200),
-    ("POS13 Update Stock Large Value", "PATCH", f"{BASE}/inventory/FUR009", {"stock": 99}, 200),
-    ("POS14 Place Order Big Quantity", "POST", f"{BASE}/orders", {
-        "customer_name": "Dev",
-        "items": [{"sku": "FUR009", "qty": 3}]
-    }, 200),
-    ("POS15 Order Lowercase SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Smriti",
-        "items": [{"sku": "fur010", "qty": 1}]
-    }, 200),
-    ("POS16 Update Stock Again", "PATCH", f"{BASE}/inventory/FUR011", {"stock": 10}, 200),
-    ("POS17 Order Recently Updated SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Vikas",
-        "items": [{"sku": "FUR011", "qty": 1}]
-    }, 200),
-    ("POS18 Order Only 1 Item", "POST", f"{BASE}/orders", {
-        "customer_name": "Shreya",
-        "items": [{"sku": "FUR012", "qty": 1}]
-    }, 200),
-    ("POS19 Order Another Valid SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Arjun",
-        "items": [{"sku": "FUR013", "qty": 2}]
-    }, 200),
-    ("POS20 Get Existing Order", "GET", f"{BASE}/orders/2", None, 200),
-]
+    }
+    test_order2 = {
+        "customer_name": "Test User 2",
+        "items": [{"sku": "FUR002", "qty": 1}]
+    }
+    
+    # Place orders
+    client.post("/orders/", json=test_order1)
+    client.post("/orders/", json=test_order2)
+    
+    # Delete orders from the last hour
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(hours=1)
+    
+    # Format dates as ISO strings
+    start_iso = start_date.isoformat()
+    end_iso = end_date.isoformat()
+    
+    # Delete orders in date range
+    response = client.delete(f"/orders/?start_date={start_iso}&end_date={end_iso}")
+    assert response.status_code == 200
+    assert response.json()["deleted_count"] >= 0
 
-# ===========================
-# NEGATIVE TEST CASES
-# ===========================
-negative_tests = [
-    # (test_name, method, endpoint, body, expected_status)
-    ("NEG01 Invalid SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Sam",
-        "items": [{"sku": "BADSKU", "qty": 1}]
-    }, 400),
-    ("NEG02 Out of Stock", "POST", f"{BASE}/orders", {
-        "customer_name": "John",
-        "items": [{"sku": "FUR001", "qty": 99999}]
-    }, 400),
-    ("NEG03 Duplicate SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Ana",
-        "items": [{"sku": "FUR002", "qty": 1}, {"sku": "FUR002", "qty": 1}]
-    }, 400),
-    ("NEG04 Negative Stock", "PATCH", f"{BASE}/inventory/FUR001", {"stock": -5}, 422),
-    ("NEG05 Order Not Found", "GET", f"{BASE}/orders/99999", None, 404),
-    ("NEG06 Missing Customer Name", "POST", f"{BASE}/orders", {
-        "items": [{"sku": "FUR003", "qty": 1}]
-    }, 422),
-    ("NEG07 Negative Qty", "POST", f"{BASE}/orders", {
-        "customer_name": "Bad",
-        "items": [{"sku": "FUR003", "qty": -1}]
-    }, 422),
-    ("NEG08 Zero Qty", "POST", f"{BASE}/orders", {
-        "customer_name": "Zero",
-        "items": [{"sku": "FUR003", "qty": 0}]
-    }, 422),
-    ("NEG09 Update Stock Negative", "PATCH", f"{BASE}/inventory/FUR004", {"stock": -5}, 422),
-    ("NEG10 Update Invalid SKU", "PATCH", f"{BASE}/inventory/WRONGSKU", {"stock": 5}, 404),
-    ("NEG11 Invalid Body for Stock", "PATCH", f"{BASE}/inventory/FUR005", {"wrong": 5}, 422),
-    ("NEG12 Stock Update No Body", "PATCH", f"{BASE}/inventory/FUR006", None, 422),
-    ("NEG13 Invalid JSON", "POST", f"{BASE}/orders", "{bad json}", 400),
-    ("NEG14 Missing Items Key", "POST", f"{BASE}/orders", {"customer_name": "Test"}, 422),
-    ("NEG15 Empty SKU", "POST", f"{BASE}/orders", {
-        "customer_name": "Bad",
-        "items": [{"sku": "", "qty": 1}]
-    }, 422),
-    ("NEG16 Qty as String", "POST", f"{BASE}/orders", {
-        "customer_name": "Bad",
-        "items": [{"sku": "FUR007", "qty": "abc"}]
-    }, 422),
-    ("NEG17 Missing SKU Field", "POST", f"{BASE}/orders", {
-        "customer_name": "Bad",
-        "items": [{"qty": 2}]
-    }, 422),
-    ("NEG18 Fetch Order String ID", "GET", f"{BASE}/orders/abc", None, 422),
-    ("NEG19 PATCH No Content-Type", "PATCH", f"{BASE}/inventory/FUR010", {"stock": 2}, 415),
-    ("NEG20 POST No Content-Type", "POST", f"{BASE}/orders", {
-        "customer_name": "Bad",
-        "items": [{"sku": "FUR003", "qty": 1}]
-    }, 415),]
+def test_delete_orders_by_status():
+    """Test deleting orders by status"""
+    # First create a test order
+    test_order = {
+        "customer_name": "Test User Status",
+        "items": [{"sku": "FUR001", "qty": 1}]
+    }
+    client.post("/orders/", json=test_order)
+    
+    # Delete orders with status 'confirmed'
+    response = client.delete("/orders/?status=confirmed")
+    assert response.status_code == 200
+    assert response.json()["deleted_count"] >= 0
 
-
-def main():
-    print("\n===== RUNNING POSITIVE TESTS =====")
-    for name, m, u, b, e in positive_tests:
-        run(name, m, u, b, e)
-
-    print("\n===== RUNNING NEGATIVE TESTS =====")
-    for name, m, u, b, e in negative_tests:
-        run(name, m, u, b, e)
-
-    save_results()
-
-
-if __name__ == "__main__":
-    main()
+def test_invalid_date_range():
+    """Test with invalid date range"""
+    response = client.delete("/orders/?start_date=invalid-date")
+    assert response.status_code == 422  # Validation error

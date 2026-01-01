@@ -28,7 +28,7 @@ class InventoryPublic(BaseModel):
     sku: str
     name: str
     stock: int
-    status: Literal["available", "out_of_stock"]
+    status: Literal["available", "few_left", "out_of_stock"]
     few_left: bool = False
 
 
