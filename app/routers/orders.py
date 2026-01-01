@@ -39,7 +39,7 @@ def get_next_order_id(db):
         
         if last_order:
             # If orders exist, start from the highest order_id + 1
-            new_id = last_order["order_id"] + 1
+            new_id = last_order["order_id"] 
         else:
             # If no orders exist, start from 1
             new_id = 1
@@ -268,74 +268,4 @@ def get_order(order_id: int, request: Request, db = Depends(get_db)):
         "status": order_status,
         "total_items": order["total_items"],
         "items": order["items"]
-    }
-@router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_order(order_id: int, request: Request, db = Depends(get_db)):
-    """Delete a specific order by order_id"""
-    trace = getattr(request.state, "trace_id", None)
-    log = logger.bind(trace_id=trace)
-    
-    log.info(f"Attempting to delete order {order_id}")
-    
-    # First check if order exists
-    order = db.orders.find_one({"order_id": order_id})
-    if not order:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={"message": f"Order {order_id} not found"}
-        )
-    
-    # Delete the order
-    result = db.orders.delete_one({"order_id": order_id})
-    
-    if result.deleted_count == 1:
-        log.success(f"Successfully deleted order {order_id}")
-        return None
-    else:
-        log.error(f"Failed to delete order {order_id}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={"message": f"Failed to delete order {order_id}"}
-        )
-
-@router.delete("/", status_code=status.HTTP_200_OK)
-def delete_orders(
-    start_date: datetime = None,
-    end_date: datetime = None,
-    status_filter: str = None,
-    request: Request = None,
-    db = Depends(get_db)
-):
-    """Delete multiple orders based on criteria"""
-    trace = getattr(request.state, "trace_id", None) if request else None
-    log = logger.bind(trace_id=trace)
-    
-    query = {}
-    
-    # Add date range filter if provided
-    if start_date or end_date:
-        date_query = {}
-        if start_date:
-            date_query["$gte"] = start_date
-        if end_date:
-            date_query["$lte"] = end_date
-        query["created_at"] = date_query
-    
-    # Add status filter if provided
-    if status_filter:
-        query["status"] = status_filter.lower()
-    
-    log.info(f"Deleting orders with query: {query}")
-    
-    # Get count before deletion for logging
-    count_before = db.orders.count_documents(query)
-    
-    # Perform deletion
-    result = db.orders.delete_many(query)
-    
-    log.success(f"Deleted {result.deleted_count} of {count_before} matching orders")
-    
-    return {
-        "deleted_count": result.deleted_count,
-        "matched_count": count_before
     }
