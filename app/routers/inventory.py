@@ -119,9 +119,9 @@ def update_stock(sku: str, payload: schemas.StockUpdate,
     log = logger.bind(trace_id=trace)
 
     sku = normalize_sku(sku)
-    log.info(f"stock update request — sku={sku}, new_stock={payload.stock}")
+    log.info(f"stock update request — sku={sku}, new_stock={payload.delta}")
 
-    if payload.stock < 0:
+    if payload.delta < 0:
         err(
             {
                 "success": False,
@@ -135,7 +135,7 @@ def update_stock(sku: str, payload: schemas.StockUpdate,
     try:
         res = db["inventory"].update_one(
             {"sku": sku},
-            {"$set": {"stock": payload.stock}},
+            {"$inc": {"stock": payload.delta}},
         )
 
         if res.matched_count == 0:

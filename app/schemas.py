@@ -21,7 +21,7 @@ class InventoryItem(APIModel):
 
 
 class StockUpdate(BaseModel):
-    stock: conint(ge=0)
+    delta: conint(gt=0)
 
 
 class InventoryPublic(BaseModel):
