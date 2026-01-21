@@ -234,9 +234,7 @@ def place_order(
         )
 
 
-# ==========================
-#  GET ORDER
-# ==========================
+# GET ORDER
 
 @router.get("/{order_id}", response_model=schemas.OrderDetail)
 def get_order(order_id: int, request: Request, db = Depends(get_db)):
